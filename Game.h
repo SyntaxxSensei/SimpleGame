@@ -25,12 +25,19 @@ private:
 
 	// Mouse position
 	sf::Vector2i mousePosWindow;
+	sf::Vector2f mousePosView;
+
+	// Resources
+	sf::Font font;
 
 	// Game logic
-	int points;
+	bool endGame;
+	unsigned points;
+	int health;
 	float enemySpawnTimer;
 	float enemySpawnTimerMax;
 	int maxEnemies;
+	bool mouseHeld;
 
 	// Game objects
 	std::vector<sf::RectangleShape> enemies;
@@ -39,6 +46,7 @@ private:
 	// Private functions
 	void initVariables();
 	void initWindow();
+	void initFonts();
 	void initEnemies();
 
 public:
@@ -48,6 +56,7 @@ public:
 
 	// Accessors
 	const bool running() const;
+	const bool getEndGame() const;
 
 	// Functions
 	void spawnEnemy();
