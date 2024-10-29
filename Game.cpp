@@ -26,7 +26,18 @@ void Game::initWindow()
 
 void Game::initFonts()
 {
-    this->font.loadFromFile("Fonts/Slackey-Regular.ttf");
+    if (this->font.loadFromFile("Fonts/Slackey-Regular.ttf"))
+    {
+        std::cout << "ERROR::GAME::INITFONTS::Failed to load font!" << "\n";
+    }
+}
+
+void Game::initText()
+{
+    this->uiText.setFont(font);
+    this->uiText.setCharacterSize(32);
+    this->uiText.setFillColor(sf::Color::White);
+    this->uiText.setString("NONE");
 }
 
 void Game::initEnemies()
@@ -42,6 +53,8 @@ Game::Game()
 {
 	this->initVariables();
 	this->initWindow();
+    this->initFonts();
+    this->initText();
     this->initEnemies();
 }
 
@@ -119,6 +132,15 @@ void Game::updateMousePositions()
     this->mousePosView = this->window->mapPixelToCoords(this->mousePosWindow);
 }
 
+void Game::updateText()
+{
+    std::stringstream ss;
+
+    ss << "Points: " << this->points << "\n"
+        << "Health: " << this->health << "\n";
+    this->uiText.setString(ss.str());
+}
+
 void Game::updateEnemies()
 {
     /*
@@ -194,6 +216,7 @@ void Game::update()
     if (this->endGame == false)
     {
         this->updateMousePositions();
+        this->updateText();
         this->updateEnemies();
     }
 
@@ -202,13 +225,18 @@ void Game::update()
         this->endGame = true;
 }
 
-void Game::renderEnemies()
+void Game::renderText(sf::RenderTarget& target)
+{
+    target.draw(this->uiText);
+}
+
+void Game::renderEnemies(sf::RenderTarget& target)
 {
     // Rendering all the enemies
 
     for (auto& e : this->enemies)
     {
-        this->window->draw(e);
+        target.draw(e);
     }
 }
 
@@ -227,7 +255,9 @@ void Game::render()
     this->window->clear();
 
     // Draw game objects
-    this->renderEnemies();
+    this->renderEnemies(*this->window);
+
+    this->renderText(*this->window);
 
     this->window->display();
 }
